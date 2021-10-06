@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Record;
+use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -34,5 +35,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linktoDashboard('Dashboard');
         yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'record_index');
         yield MenuItem::linkToCrud('Records', 'fas fa-list', Record::class);
+        yield MenuItem::linkToCrud('Users', 'fas fa-list', User::class);
     }
 }

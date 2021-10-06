@@ -15,14 +15,14 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/record")
  */
-class MainController extends AbstractController
+class RecordController extends AbstractController
 {
     /**
      * @Route("/", name="record_index")
      */
     public function index(RecordRepository $recordRepository): Response
     {
-        return $this->render('main/index.html.twig', [
+        return $this->render('record/index.html.twig', [
             'records' => $recordRepository->findAll(),
         ]);
     }
