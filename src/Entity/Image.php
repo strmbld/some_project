@@ -32,6 +32,11 @@ class Image
      */
     private $record;
 
+    public function __toString()
+    {
+        return $this->filename;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

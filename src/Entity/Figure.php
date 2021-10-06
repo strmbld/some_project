@@ -29,6 +29,11 @@ class Figure
      */
     private $shape;
 
+    public function __toString()
+    {
+        return $this->color . ' ' . $this->shape;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

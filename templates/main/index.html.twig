@@ -3,14 +3,16 @@
 {% block title %}Records{% endblock %}
 
 {% block body %}
+    {% for message in app.session.flashBag.get('success') %}
+        <div class="alert alert-info alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+    {% endfor %}
 
-    <div>
-        {% for msg in app.session.flashBag.get('success') %}
-            <div class="alert alert-success">
-                {{ msg }}
-            </div>
-        {% endfor %}
-    </div>
+    <h2>Records</h2>
+    <a href="{{ path('record_new') }}">New</a>
+    <hr>
 
     {% if records %}
     {% for record in records %}
@@ -22,6 +24,7 @@
         {% for image in record.images %}
             {{ image.filename }}
         {% endfor %}
+        <br />
     {% endfor %}
     {% else %}
     There are no records yet.

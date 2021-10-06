@@ -41,12 +41,6 @@ class MainController extends AbstractController
                 return new Response('Required image is absent', 400);
             }
 
-            /**
-            $files = [];
-            for ($i = 0; $i < 4; $i++) {
-
-            */
-
             $fileNames = $imageUploader->upload($form);
             foreach ($fileNames as $fileName) {
                 $image = (new Image())->setFilename($fileName);
@@ -65,10 +59,5 @@ class MainController extends AbstractController
         return $this->renderForm('record/new.html.twig', [
             'form' => $form,
         ]);
-    }
-
-    public function addFlash($type, $message): void
-    {
-        $this->container->get('session')->getFlashBag()->add($type, $message);
     }
 }
