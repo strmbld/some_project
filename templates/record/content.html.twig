@@ -1,3 +1,10 @@
+{% for message in app.session.flashBag.get('success') %}
+    <div class="alert alert-info alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+{% endfor %}
+
 <ul>
         {% if records %}
                 {% for record in records %}

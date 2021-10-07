@@ -23,17 +23,18 @@ class RecordController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->render('record/index.html.twig', []);
+        return $this->render('record/index.html.twig', [])
+            ->setSharedMaxAge(3600);
     }
 
     /**
-     * @Route("/header", name="record_header")
+     * @Route("/content", name="record_content")
      */
-    public function recordHeader(RecordRepository $recordRepository): Response
+    public function recordContent(RecordRepository $recordRepository): Response
     {
-        return $this->render('record/header.html.twig', [
+        return $this->render('record/content.html.twig', [
             'records' => $recordRepository->findAll(),
-        ])->setSharedMaxAge(3600);
+        ]);
     }
 
     /**
@@ -46,10 +47,10 @@ class RecordController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($overkill->check($form) == 11) {
+            if ($overkill->check($form) === 11) {
                 return new Response('Required image is absent', 400);
             }
-            if ($overkill->check($form) == 12) {
+            if ($overkill->check($form) === 12) {
                 $response = $this->renderView('overkill/debug.html.twig',[
                     'form' => $form,
                 ]);

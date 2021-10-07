@@ -28,17 +28,12 @@ class HashPasswordListener implements EventSubscriber
             return;
         }
 
-        $this->encodePassword($entity);
-    }
-
-    public function encodePassword(User $entity)
-    {
-        if (!$entity->getPassword()) {
-            return;
-        }
-
-        $encoded = $this->passwordHasher->hashPassword($entity, $entity->getPassword());
+        $encoded = $this->passwordHasher->hashPassword($entity, $entity->getPlainPassword());
         $entity->setPassword($encoded);
+
+        if (array_search('ROLE_ADMIN', $entity->getRoles())) {
+            $entity->setPlainPassword('Not available if ROLE_ADMIN');
+        }
     }
 
     public function preUpdate(LifecycleEventArgs $args)
@@ -48,7 +43,15 @@ class HashPasswordListener implements EventSubscriber
             return;
         }
 
-        $this->encodePassword($entity);
+        // ROLE_ADMIN case
+        if (array_search('ROLE_ADMIN', $entity->getRoles())) {
+            $entity->setPlainPassword('Not available if ROLE_ADMIN');
+            return;
+        }
+
+        $encoded = $this->passwordHasher->hashPassword($entity, $entity->getPlainPassword());
+
+        $entity->setPassword($encoded);
 
         $em = $args->getEntityManager();
         $meta = $em->getClassMetadata(get_class($entity));

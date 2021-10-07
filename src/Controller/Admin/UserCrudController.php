@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
@@ -27,8 +29,8 @@ class UserCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $id = NumberField::new('id');
-        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
+        $id = NumberField::new('id')->hideWhenCreating();
+        if (Crud::PAGE_EDIT === $pageName) {
             yield $id->setFormTypeOption('disabled', true);
         } else {
             yield $id;
@@ -37,11 +39,26 @@ class UserCrudController extends AbstractCrudController
         yield TextField::new('username');
         yield ArrayField::new('roles');
 
-        $password = TextField::new('password');
+        yield TextField::new('plainPassword');
+
+        $password = TextField::new('password')->hideWhenCreating();
         if (Crud::PAGE_EDIT === $pageName) {
             yield $password->setFormTypeOption('disabled', true);
         } else {
             yield $password;
         }
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $action = parent::configureActions($actions)->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, Action::EDIT);
+
+        if (!\is_null($action)) {
+            $action->setDisplayCallable(static function ($entity) {
+                return !array_search('ROLE_ADMIN', $entity->getRoles());
+            });
+        }
+
+        return $actions;
     }
 }
