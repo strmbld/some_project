@@ -16,20 +16,6 @@
     <a href="{{ path('record_new') }}">New</a>
     <hr>
 
-    {% if records %}
-    {% for record in records %}
-    {{ record.id }}
-    {{ record.text }}
-    {{ record.email }}
-    {{ record.figure.color }}
-    {{ record.figure.shape }}
-        {% for image in record.images %}
-            {{ image.filename }}
-        {% endfor %}
-        <br />
-    {% endfor %}
-    {% else %}
-    There are no records yet.
-    {% endif %}
+    {{ render_esi(path('record_header')) }}
 
 {% endblock %}

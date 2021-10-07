@@ -1,0 +1,18 @@
+<ul>
+        {% if records %}
+                {% for record in records %}
+                        <li>{{ record.id }}
+                        {{ record.text }}
+                        {{ record.email }}
+                        {{ record.figure.color }}
+                        {{ record.figure.shape }}
+                        {% for image in record.images %}
+                                {{ image.filename }}
+                        {% endfor %}
+                        </li>
+                        <br />
+                {% endfor %}
+        {% else %}
+                There are no records yet.
+        {% endif %}
+</ul>

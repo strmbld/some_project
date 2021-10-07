@@ -20,11 +20,19 @@ class RecordController extends AbstractController
     /**
      * @Route("/", name="record_index")
      */
-    public function index(RecordRepository $recordRepository): Response
+    public function index(): Response
     {
-        return $this->render('record/index.html.twig', [
+        return $this->render('record/index.html.twig', []);
+    }
+
+    /**
+     * @Route("/header", name="record_header")
+     */
+    public function recordHeader(RecordRepository $recordRepository): Response
+    {
+        return $this->render('record/header.html.twig', [
             'records' => $recordRepository->findAll(),
-        ]);
+        ])->setSharedMaxAge(3600);
     }
 
     /**
