@@ -7,6 +7,7 @@ use App\Entity\Record;
 use App\Form\RecordFormType;
 use App\Repository\RecordRepository;
 use App\Service\ImageUploader;
+use App\Service\Overkill;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,15 +39,21 @@ class RecordController extends AbstractController
     /**
      * @Route("/new", name="record_new")
      */
-    public function new(Request $request, ImageUploader $imageUploader): Response
+    public function new(Request $request, ImageUploader $imageUploader, Overkill $overkill): Response
     {
         $record = new Record();
         $form = $this->createForm(RecordFormType::class, $record);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$form['attachments'][0]['file']->getData()) {
+            if ($overkill->check($form) == 11) {
                 return new Response('Required image is absent', 400);
+            }
+            if ($overkill->check($form) == 12) {
+                $response = $this->renderView('overkill/debug.html.twig',[
+                    'form' => $form,
+                ]);
+                return new Response($response, 400);
             }
 
             $fileNames = $imageUploader->upload($form);
