@@ -5,6 +5,7 @@ namespace App\Doctrine;
 use App\Entity\User;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class HashPasswordListener implements EventSubscriber
@@ -31,9 +32,20 @@ class HashPasswordListener implements EventSubscriber
         $encoded = $this->passwordHasher->hashPassword($entity, $entity->getPlainPassword());
         $entity->setPassword($encoded);
 
-        if (array_search('ROLE_ADMIN', $entity->getRoles())) {
+        if ($this->isAdmin($entity)) {
             $entity->setPlainPassword('Not available if ROLE_ADMIN');
         }
+    }
+
+    public function isAdmin(User $user): bool
+    {
+        return array_search('ROLE_ADMIN', $user->getRoles());
+    }
+
+    public function isAlreadyAdmin(User $user): bool
+    {
+        return array_search('ROLE_ADMIN', $user->getRoles())
+            && $user->getPlainPassword() === 'Not available if ROLE_ADMIN';
     }
 
     public function preUpdate(LifecycleEventArgs $args)
@@ -43,15 +55,19 @@ class HashPasswordListener implements EventSubscriber
             return;
         }
 
-        // ROLE_ADMIN case
-        if (array_search('ROLE_ADMIN', $entity->getRoles())) {
-            $entity->setPlainPassword('Not available if ROLE_ADMIN');
-            return;
+        // already ROLE_ADMIN case
+        if ($this->isAlreadyAdmin($entity)) {
+            throw new Exception('Trying to update/edit existing admin user');
         }
 
         $encoded = $this->passwordHasher->hashPassword($entity, $entity->getPlainPassword());
 
         $entity->setPassword($encoded);
+
+        // new ROLE_ADMIN case
+        if ($this->isAdmin($entity)) {
+            $entity->setPlainPassword('Not available if ROLE_ADMIN');
+        }
 
         $em = $args->getEntityManager();
         $meta = $em->getClassMetadata(get_class($entity));
