@@ -2,6 +2,10 @@
 
 {% block title %}Records - New record{% endblock %}
 
+{% block javascripts %}
+    <script src="{{ asset('/bundles/jsblank/app.js') }}"></script>
+{% endblock %}
+
 {% block body %}
 
     {{ form_start(form) }}

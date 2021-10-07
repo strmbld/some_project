@@ -20,16 +20,25 @@ class AttachmentsImagesFormType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'label' => 'optional_image1',
+                'attr' => [
+                    'hidden' => true,
+                ],
             ])
             ->add(2, ImageFormType::class, [
                 'mapped' => false,
                 'required' => false,
                 'label' => 'optional_image2',
+                'attr' => [
+                    'hidden' => true,
+                ],
             ])
             ->add(3, ImageFormType::class, [
                 'mapped' => false,
                 'required' => false,
                 'label' => 'optional_image3',
+                'attr' => [
+                    'hidden' => true,
+                ],
             ])
         ;
     }
