@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\HttpFoundation\Request;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -59,6 +60,25 @@ class UserCrudController extends AbstractCrudController
             });
         }
 
-        return $actions;
+        $deleteFromList = Action::new('deleteFromList', 'Delete from list', 'trash')
+            ->linkToCrudAction('deleteFromList');
+
+        return $actions
+            ->add(Crud::PAGE_INDEX, $deleteFromList)
+            ->disable(Action::DELETE)
+            ;
+    }
+
+    public function deleteFromList(Request $request)
+    {
+        $id = $request->query->get('entityId');
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
+
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        return $this->redirect($request->headers->get('referer'));
     }
 }
